@@ -1,0 +1,6 @@
+DROP TABLE costumer_address CASCADE;
+DROP TABLE customer CASCADE;
+DROP TABLE orders CASCADE;
+DROP TABLE order_status CASCADE;
+DROP TABLE product CASCADE;
+DROP TABLE product_stock CASCADE;
