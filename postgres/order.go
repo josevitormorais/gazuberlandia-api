@@ -8,11 +8,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func NewOrderRepository(db *sqlx.DB) gazuberlandia.OrderService {
-	return &postgres{db: db}
+type OrderService struct {
+	db *sqlx.DB
 }
 
-func (p *postgres) CreateOrder(ctx context.Context, order *gazuberlandia.Order) error {
+func NewOrderRepository(db *sqlx.DB) gazuberlandia.OrderService {
+	return &OrderService{db: db}
+}
+
+func (p *OrderService) CreateOrder(ctx context.Context, order *gazuberlandia.Order) error {
 	tx := p.db.MustBegin()
 
 	result := tx.MustExec("INSERT INTO orders (id_costumer, id_product, total_amount, type_payment) VALUES ($1, $2, $3, $4) returning *;",

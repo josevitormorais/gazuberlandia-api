@@ -6,6 +6,7 @@ import (
 	"gazuberlandia"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/alexedwards/argon2id"
 	"github.com/go-chi/chi/v5"
@@ -17,14 +18,21 @@ func (s *Handler) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 
 	if err != nil {
-		http.Error(w, "Error invalid to struct from json", http.StatusBadRequest)
+		ResponseError(w, &gazuberlandia.AppError{
+			Code:    gazuberlandia.UNPROCESSABLEENTITY,
+			Message: "The format json is invalid",
+			Err:     err,
+		})
 		return
 	}
 
 	hash, err := argon2id.CreateHash(user.Password, argon2id.DefaultParams)
 
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		ResponseError(w, &gazuberlandia.AppError{
+			Code: gazuberlandia.INTERNAL,
+			Err:  err,
+		})
 		return
 	}
 
@@ -33,9 +41,16 @@ func (s *Handler) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	err = s.userService.CreateUser(r.Context(), user)
 
 	if err != nil {
-		http.Error(w, "Error create User", http.StatusBadRequest)
+		if ok := strings.Contains(err.Error(), "already exists"); !ok {
+			ResponseError(w, &gazuberlandia.AppError{
+				Code:    gazuberlandia.CONFLICT,
+				Message: "Email already exists",
+				Err:     err,
+			})
+		}
 		return
 	}
+
 	w.WriteHeader(http.StatusNoContent)
 }
 

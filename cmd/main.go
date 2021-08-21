@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"gazuberlandia/handler"
+	"gazuberlandia/api/handler"
 	"gazuberlandia/postgres"
 	"log"
 	"net/http"
@@ -30,18 +30,17 @@ func main() {
 func run() error {
 
 	conn, err := postgres.Open(urlConn)
-
 	if err != nil {
 		return err
 	}
-
 	defer conn.Close()
 
 	h := handler.NewHandler(conn)
 
 	srv := http.Server{
-		Handler: h,
-		Addr:    ":5000",
+		Handler:  h,
+		Addr:     ":5000",
+		ErrorLog: log.New(os.Stderr, "LoggerError: ", log.Lshortfile),
 	}
 
 	go func() {

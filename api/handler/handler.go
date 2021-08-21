@@ -2,7 +2,7 @@ package handler
 
 import (
 	"gazuberlandia"
-	"gazuberlandia/handler/middlewares"
+	"gazuberlandia/api/handler/middlewares"
 	"gazuberlandia/postgres"
 	"time"
 

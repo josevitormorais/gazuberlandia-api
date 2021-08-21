@@ -20,6 +20,7 @@ func NewServer() *Server {
 	s := &Server{
 		router: chi.NewMux(),
 	}
+
 	s.routes()
 
 	return s

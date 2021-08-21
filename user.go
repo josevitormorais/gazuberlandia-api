@@ -16,7 +16,7 @@ type User struct {
 
 type UserService interface {
 	CreateUser(ctx context.Context, user *User) error
-	FindUserById(ctx context.Context, id int) ([]User, error)
+	FindUserById(ctx context.Context, id int) ([]*User, error)
 	FindUserByEmail(ctx context.Context, email string) (User, error)
 	FindAllUsers(ctx context.Context) ([]User, error)
 }

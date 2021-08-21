@@ -7,11 +7,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func NewCustomerRepository(db *sqlx.DB) gazuberlandia.CostumerService {
-	return &postgres{db: db}
+type CustomerService struct {
+	db *sqlx.DB
 }
 
-func (p *postgres) CreateCustomer(ctx context.Context, customer *gazuberlandia.Costumer) error {
+func NewCustomerRepository(db *sqlx.DB) gazuberlandia.CostumerService {
+	return &CustomerService{db: db}
+}
+
+func (p *CustomerService) CreateCustomer(ctx context.Context, customer *gazuberlandia.Costumer) error {
 	tx := p.db.MustBegin()
 
 	tx.MustExec("INSERT INTO customer (name, phone, cpf) VALUES($1, $2, $3)",
@@ -21,7 +25,7 @@ func (p *postgres) CreateCustomer(ctx context.Context, customer *gazuberlandia.C
 	return nil
 }
 
-func (p *postgres) FindCostumerById(ctx context.Context, id int) ([]gazuberlandia.Costumer, error) {
+func (p *CustomerService) FindCostumerById(ctx context.Context, id int) ([]gazuberlandia.Costumer, error) {
 	var customer []gazuberlandia.Costumer
 
 	err := p.db.Select(&customer, "SELECT * from customer c where c.id = $1", id)
