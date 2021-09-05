@@ -4,6 +4,7 @@ import (
 	"context"
 	"gazuberlandia"
 
+	"github.com/alexedwards/argon2id"
 	_ "github.com/jackc/pgx/v4"
 	"github.com/jmoiron/sqlx"
 )
@@ -18,9 +19,18 @@ func NewUserRepository(db *sqlx.DB) *userService {
 
 func (p *userService) CreateUser(ctx context.Context, user *gazuberlandia.User) error {
 	tx, err := p.db.BeginTx(ctx, nil)
+
 	if err != nil {
 		return err
 	}
+
+	hash, err := generateHash(user.Password)
+
+	if err != nil && hash == "" {
+		return err
+	}
+
+	user.Password = hash
 
 	_, err = tx.ExecContext(ctx, "insert into users (name, email, password) values ($1, $2, $3)",
 		&user.Name, &user.Email, &user.Password)
@@ -31,6 +41,18 @@ func (p *userService) CreateUser(ctx context.Context, user *gazuberlandia.User) 
 	}
 
 	return tx.Commit()
+}
+
+func generateHash(stringToHash string) (string, error) {
+
+	hash, err := argon2id.CreateHash(stringToHash, argon2id.DefaultParams)
+
+	if err != nil {
+		return "", err
+	}
+
+	return hash, nil
+
 }
 
 func (p *userService) FindUserById(ctx context.Context, id int) ([]*gazuberlandia.User, error) {

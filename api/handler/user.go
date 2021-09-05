@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alexedwards/argon2id"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -28,18 +27,6 @@ func (s *HttpServer) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hash, err := argon2id.CreateHash(user.Password, argon2id.DefaultParams)
-
-	if err != nil {
-		ResponseError(w, &gazuberlandia.AppError{
-			Code: gazuberlandia.INTERNAL,
-			Err:  err,
-		})
-		return
-	}
-
-	user.Password = hash
-
 	err = s.userService.CreateUser(r.Context(), user)
 
 	if err != nil {
@@ -50,6 +37,7 @@ func (s *HttpServer) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 				Err:     err,
 			})
 		}
+		ResponseError(w, err)
 		return
 	}
 

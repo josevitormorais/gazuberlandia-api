@@ -13,13 +13,13 @@ type HttpServer struct {
 }
 
 func NewServer(options ...func(*HttpServer)) (*HttpServer, error) {
-	s := HttpServer{}
+	server := &HttpServer{}
 
 	for _, optionsFn := range options {
-		optionsFn(&s)
+		optionsFn(server)
 	}
 
-	return &s, nil
+	return server, nil
 }
 
 func NewConfigUserHandler(service gazuberlandia.UserService) func(*HttpServer) {
