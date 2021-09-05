@@ -39,12 +39,6 @@ func NewHandler(db *sqlx.DB) *chi.Mux {
 		r.Post("/login", h.HandleLogin)
 	})
 
-	mux.Route("/users", func(r chi.Router) {
-		r.Post("/", h.HandleCreateUser)
-		r.Get("/all", h.HandlerFindAllUsers)
-		r.Get("/{userId}", h.HandlerFindUserById)
-	})
-
 	mux.Route("/customers", func(r chi.Router) {
 		r.Post("/", h.HandleCreateCustomer)
 		r.Get("/{customerId}", h.HandleFindCustomerById)

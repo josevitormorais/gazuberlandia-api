@@ -21,15 +21,36 @@ const (
 )
 
 func main() {
-	if err := run(); err != nil {
-		log.Println("Error running server..", err)
+	conn, err := postgres.Open(urlConn)
+
+	if err != nil {
+		fmt.Println("Error", err)
 		os.Exit(1)
 	}
+	defer conn.Close()
+
+	userRepository := postgres.NewUserRepository(conn)
+
+	server, err := handler.NewServer(
+		handler.NewConfigUserHandler(userRepository),
+	)
+
+	if err != nil {
+		fmt.Println("Error", err)
+
+	}
+
+	http.ListenAndServe(":5000", server)
+
 }
 
+// if err := run(); err != nil {
+// 	log.Println("Error running server..", err)
+// 	os.Exit(1)
+// }
 func run() error {
-
 	conn, err := postgres.Open(urlConn)
+
 	if err != nil {
 		return err
 	}

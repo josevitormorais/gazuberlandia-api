@@ -12,7 +12,9 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (s *Handler) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
+// HANDLER -> qualquer estrutura que embedding http.Handler ou implementa os metodos de http.Handler
+
+func (s *HttpServer) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	var user *gazuberlandia.User
 
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -54,7 +56,7 @@ func (s *Handler) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (s *Handler) HandlerFindUserById(w http.ResponseWriter, r *http.Request) {
+func (s *HttpServer) HandlerFindUserById(w http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.Atoi(chi.URLParam(r, "userId"))
 
 	if err != nil {

@@ -8,15 +8,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type UserService struct {
+type userService struct {
 	db *sqlx.DB
 }
 
-func NewUserRepository(db *sqlx.DB) *UserService {
-	return &UserService{db: db}
+func NewUserRepository(db *sqlx.DB) *userService {
+	return &userService{db: db}
 }
 
-func (p *UserService) CreateUser(ctx context.Context, user *gazuberlandia.User) error {
+func (p *userService) CreateUser(ctx context.Context, user *gazuberlandia.User) error {
 	tx, err := p.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func (p *UserService) CreateUser(ctx context.Context, user *gazuberlandia.User) 
 	return tx.Commit()
 }
 
-func (p *UserService) FindUserById(ctx context.Context, id int) ([]*gazuberlandia.User, error) {
+func (p *userService) FindUserById(ctx context.Context, id int) ([]*gazuberlandia.User, error) {
 	user := []*gazuberlandia.User{}
 	err := p.db.Select(&user, "select * from users u where u.id=$1", id)
 	if err != nil {
@@ -42,7 +42,7 @@ func (p *UserService) FindUserById(ctx context.Context, id int) ([]*gazuberlandi
 	return user, nil
 }
 
-func (p *UserService) FindUserByEmail(ctx context.Context, email string) (gazuberlandia.User, error) {
+func (p *userService) FindUserByEmail(ctx context.Context, email string) (gazuberlandia.User, error) {
 	var user gazuberlandia.User
 
 	err := p.db.GetContext(ctx, &user, "select * from users u where u.email=$1", email)
@@ -54,7 +54,7 @@ func (p *UserService) FindUserByEmail(ctx context.Context, email string) (gazube
 	return user, nil
 }
 
-func (p *UserService) FindAllUsers(ctx context.Context) ([]gazuberlandia.User, error) {
+func (p *userService) FindAllUsers(ctx context.Context) ([]gazuberlandia.User, error) {
 	user := []gazuberlandia.User{}
 
 	err := p.db.Select(&user, "select * from users")
