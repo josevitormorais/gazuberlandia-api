@@ -2,7 +2,7 @@ package handler
 
 import (
 	"gazuberlandia"
-	"gazuberlandia/api/handler/middlewares"
+	"gazuberlandia/handler/middlewares"
 	"gazuberlandia/postgres"
 	"time"
 
@@ -44,9 +44,9 @@ func NewHandler(db *sqlx.DB) *chi.Mux {
 		r.Get("/{customerId}", h.HandleFindCustomerById)
 	})
 
-	mux.Route("/orders", func(r chi.Router) {
-		r.Post("/", h.HandlerCreateOrder)
-	})
+	// mux.Route("/orders", func(r chi.Router) {
+	// 	r.Post("/", h.HandlerCreateOrder)
+	// })
 
 	return mux
 }

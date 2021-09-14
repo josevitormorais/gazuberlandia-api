@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"gazuberlandia/api/handler"
+	"gazuberlandia/handler"
 	"gazuberlandia/postgres"
 	"log"
 	"net/http"
@@ -27,27 +27,18 @@ func main() {
 		fmt.Println("Error", err)
 		os.Exit(1)
 	}
+
 	defer conn.Close()
 
-	userRepository := postgres.NewUserRepository(conn)
-
-	server, err := handler.NewServer(
-		handler.NewConfigUserHandler(userRepository),
+	server := handler.NewServer(
+		handler.NewServices(conn),
+		handler.NewRouter(),
 	)
-
-	if err != nil {
-		fmt.Println("Error", err)
-
-	}
 
 	http.ListenAndServe(":5000", server)
 
 }
 
-// if err := run(); err != nil {
-// 	log.Println("Error running server..", err)
-// 	os.Exit(1)
-// }
 func run() error {
 	conn, err := postgres.Open(urlConn)
 
@@ -93,15 +84,25 @@ func run() error {
 	return nil
 }
 
-// conn, _ := postgres.Open(urlConn)
-
-// app := handler.NewServer()
-
-// app.UserService = postgres.NewUserRepository(conn)
-
-// s := http.Server{
-// 	Addr:    ":4000",
-// 	Handler: app,
+// if err := run(); err != nil {
+// 	log.Println("Error running server..", err)
+// 	os.Exit(1)
 // }
 
-// log.Fatal(s.ListenAndServe())
+// conn, err := postgres.Open(urlConn)
+
+// if err != nil {
+// 	fmt.Println("Error", err)
+// 	os.Exit(1)
+// }
+// defer conn.Close()
+
+// userRepository := postgres.NewUserRepository(conn)
+
+// server, err := handler.NewServer(
+// 	handler.NewConfigUserHandler(userRepository),
+// )
+
+// if err != nil {
+// 	fmt.Println("Error", err)
+// }

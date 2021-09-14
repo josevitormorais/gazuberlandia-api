@@ -5,9 +5,15 @@ import (
 	"gazuberlandia"
 	"log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
-func (h *Handler) HandlerCreateOrder(w http.ResponseWriter, r *http.Request) {
+func (h *HttpServer) RegisterOrdersRouter(r *chi.Mux) {
+	r.Post("/orders", h.HandlerCreateOrder)
+}
+
+func (h *HttpServer) HandlerCreateOrder(w http.ResponseWriter, r *http.Request) {
 	var order *gazuberlandia.Order
 
 	err := json.NewDecoder(r.Body).Decode(&order)
